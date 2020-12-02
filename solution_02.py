@@ -7,7 +7,6 @@ def valid_password2(password, low, high, letter):
 
 
 def valid_password(password, low, high, letter):
-    count = 0
     count = sum([c == letter for c in password])
     return count >= low and count <= high
 
