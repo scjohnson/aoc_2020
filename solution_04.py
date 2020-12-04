@@ -21,10 +21,10 @@ def valid_value(key, value):
     elif key == "hcl":
         if len(value[1:]) != 6:
             return False
-        a = int(value[1:], 16)
-        for e in value[1:]:
-            if e < '0' or e > 'f':
-                return False
+        try:
+            a = int(value[1:], 16)
+        except:
+            return False
     elif key == "ecl":
         vals = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
         if value not in vals:
