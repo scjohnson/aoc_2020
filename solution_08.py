@@ -38,9 +38,9 @@ if __name__ == "__main__":
 
     code = [line.strip() for line in open(file_name)]
 
-    terminated, acc = check(code)
+    _, acc = check(code)
     print(acc)
     for variation in variations(code):
-        terminated, acc = check(code)
+        terminated, acc = check(variation)
         if terminated:
             print(acc)
