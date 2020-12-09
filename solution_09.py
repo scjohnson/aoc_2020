@@ -9,7 +9,7 @@ def contiguous_set(data, invalid_number):
         sums = numpy.add(sums[0:-1], data[i:])
         if invalid_number in sums:
             index = numpy.where(sums == invalid_number)[0][0]
-            return data[index:index+i]
+            return data[index:index+i+1]
         i += 1
 
 
@@ -21,10 +21,13 @@ def check_data(data, preamble_length):
 
 if __name__ == "__main__":
 
+    # file_name = "test_09.txt"
+    # preamble_length = 5
     file_name = "input_09.txt"
+    preamble_length = 25
     data = [int(line.strip()) for line in open(file_name)]
 
-    invalid_number = check_data(data, 25)
+    invalid_number = check_data(data, preamble_length)
     print(invalid_number)
 
     hack_list = contiguous_set(data, invalid_number)
