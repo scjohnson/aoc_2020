@@ -10,7 +10,7 @@ if __name__ == "__main__":
     minutes = int(f.readline())
     busses = f.readline().strip().split(',')
     times, offsets = np.array([], np.int), np.array([], np.int)
-    
+
     for offset, b in enumerate(busses):
         if b.isnumeric():
             times = np.append(times, int(b))
@@ -25,5 +25,5 @@ if __name__ == "__main__":
     # The old way:
     # M = np.product(times)
     # bs = np.array([M//o for o in times], int)
-    # bsp = np.array([pow(int(b), -1, t) for b, t in zip(bs, times)])
+    # bsp = np.array([pow(int(b), -1, int(t)) for b, t in zip(bs, times)])
     # print(np.sum(-offsets*bs*bsp) % M)  # 725850285300475
