@@ -45,20 +45,16 @@ if __name__ == "__main__":
     file_name = "test_14.txt"
     file_name = "input_14.txt"
 
-    bits = {}
-    for line in open(file_name):
-        if "mask" in line:
-            mask = line.strip().split(" = ")[1]
-            mask = [c for c in mask]
+    funcs = [apply, apply2]
+    for func in funcs:
+        bits = {}
+        for line in open(file_name):
+            if "mask" in line:
+                mask = line.strip().split(" = ")[1]
+                mask = [c for c in mask]
+            else:
+                bits = func(line.strip(), bits, mask)
+        if func == apply:
+            print(sum([int("".join(b), 2) for _, b in bits.items()]))  # 6631883285184
         else:
-            bits = apply(line.strip(), bits, mask)
-    print(sum([int("".join(b), 2) for _,b in bits.items()]))  # 6631883285184
-
-    bits = {}
-    for line in open(file_name):
-        if "mask" in line:
-            mask = line.strip().split(" = ")[1]
-            mask = [c for c in mask]
-        else:
-            bits = apply2(line.strip(), bits, mask)
-    print(sum([v for _, v in bits.items()]))  # 3161838538691
+            print(sum([v for _, v in bits.items()]))  # 3161838538691
