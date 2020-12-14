@@ -22,14 +22,12 @@ def apply2(instruction, bits, mask):
     address = [b for b in '{:036b}'.format(
         int(ins.split('[')[1].split(']')[0]))]
 
-    pot_addresses = [0]*len(address)
+    pot_addresses = ['X']*len(address)
     for i, m in enumerate(mask):
         if m == '0':
             pot_addresses[i] = str(address[i])
         elif m == '1':
             pot_addresses[i] = '1'
-        else:
-            pot_addresses[i] = 'X'
 
     indices = [i for i, x in enumerate(pot_addresses) if x == "X"]
     for replacements in product(['0', '1'], repeat=len(indices)):
