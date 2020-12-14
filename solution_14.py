@@ -19,8 +19,8 @@ def apply(instruction, bits, mask):
 
 def apply2(instruction, bits, mask):
     ins, value = instruction.split(" = ")
-    address = '{:036b}'.format(int(ins.split('[')[1].split(']')[0]))
-    address = [b for b in address]
+    address = [b for b in '{:036b}'.format(
+        int(ins.split('[')[1].split(']')[0]))]
 
     pot_addresses = [0]*len(address)
     for i, m in enumerate(mask):
@@ -49,11 +49,11 @@ if __name__ == "__main__":
         bits = {}
         for line in open(file_name):
             if "mask" in line:
-                mask = line.strip().split(" = ")[1]
-                mask = [c for c in mask]
+                mask = [c for c in line.strip().split(" = ")[1]]
             else:
                 bits = func(line.strip(), bits, mask)
         if func == apply:
-            print(sum([int("".join(b), 2) for _, b in bits.items()]))  # 6631883285184
+            print(sum([int("".join(b), 2)
+                       for _, b in bits.items()]))  # 6631883285184
         else:
             print(sum([v for _, v in bits.items()]))  # 3161838538691
