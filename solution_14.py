@@ -2,18 +2,6 @@ import numpy as np
 from itertools import product
 
 
-def read_mask(line):
-    mask = [0 for _ in range(36)]
-    mask_values = [0 for _ in range(36)]
-    for i, c in enumerate(line.split(" = ")[1]):
-        if c != 'X':
-            mask[i] = 1
-            mask_values[i] = int(c)
-    mask.reverse()
-    mask_values.reverse()
-    return mask, mask_values
-
-
 def set_bit(bits, address, i, b):
     if b == 1:
         bits[address] = bits[address] | (b << i)
@@ -23,20 +11,16 @@ def set_bit(bits, address, i, b):
     return bits
 
 
-def apply(instruction, bits, mask, mask_values):
+def apply(instruction, bits, mask):
     ins, value = instruction.split(" = ")
-    bit_value = [int(digit) for digit in bin(int(value))[2:]]
+    bit_value = '{:036b}'.format(int(value))
     address = int(ins.split('[')[1].split(']')[0])
 
-    bit_value.reverse()
     for i, m in enumerate(mask):
-        if not m:
-            if i < len(bit_value):
-                bits = set_bit(bits, address, i, int(bit_value[i]))
-            else:
-                bits = set_bit(bits, address, i, 0)
+        if m == 'X':
+            bits = set_bit(bits, address, 35-i, int(bit_value[i]))
         else:
-            bits = set_bit(bits, address, i, mask_values[i])
+            bits = set_bit(bits, address, 35-i, int(m))
     return bits
 
 
@@ -78,9 +62,10 @@ if __name__ == "__main__":
         bits.append(0x000000000000000000000000000000000000)
     for line in open(file_name):
         if "mask" in line:
-            mask, mask_values = read_mask(line.strip())
+            mask = line.strip().split(" = ")[1]
+            mask = [c for c in mask]
         else:
-            bits = apply(line.strip(), bits, mask, mask_values)
+            bits = apply(line.strip(), bits, mask)
     print(sum(bits))  # 6631883285184
 
     bits = {}
@@ -90,4 +75,4 @@ if __name__ == "__main__":
             mask = [c for c in mask]
         else:
             bits = apply2(line.strip(), bits, mask)
-    print(sum([v for _, v in bits.items()])) #3161838538691
+    print(sum([v for _, v in bits.items()]))  # 3161838538691
