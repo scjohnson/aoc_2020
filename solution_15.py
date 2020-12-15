@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     for i in range(len(input), final_round):
         last_last = last
-        if last_last in last_round:
+        if last in last_round:
             last = (i-last_round[last]-1)
         else:
             last = 0
