@@ -1,4 +1,5 @@
 from itertools import permutations
+import numpy as np
 
 
 def read_file(file_name):
@@ -74,11 +75,8 @@ if __name__ == "__main__":
         invalid_values.extend(invalid_numbers(rules, t))
     print(sum(invalid_values))  # 20048
 
-    whiches = []
-    names = []
-    for rule_name, rule in rules.items():
-        whiches.append(which_field(rule, valid_tickets))
-        names.append(rule_name)
+    whiches = [which_field(rule, valid_tickets) for _, rule in rules.items()]
+    names = [rule_name for rule_name, _ in rules.items()]
 
     while True:
         for (w1, w2) in permutations(whiches, 2):
@@ -87,8 +85,5 @@ if __name__ == "__main__":
         if sum([sum(x) for x in whiches]) == len(whiches):
             break
 
-    mul = 1
-    for name, which in zip(names, whiches):
-        if "departure" in name:
-            mul *= my_ticket[which.index(1)]
-    print(mul)  # 4810284647569
+    muls = [my_ticket[which.index(1)] for name, which in zip(names, whiches) if "departure" in name]
+    print(np.prod(muls))
