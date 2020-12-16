@@ -29,13 +29,19 @@ def read_file(file_name):
     return rules, my_ticket, tickets
 
 
+def valid_item(limit1, limit2, t):
+    if ((limit1[0] <= t <= limit1[1]) or
+            (limit2[0] <= t <= limit2[1])):
+        return True
+    return False
+
+
 def invalid_numbers(rules, ticket):
     invalid = []
     for t in ticket:
         valid = False
         for _, limits in rules.items():
-            if ((t >= limits[0][0] and t <= limits[0][1]) or
-                    (t >= limits[1][0] and t <= limits[1][1])):
+            if valid_item(limits[0], limits[1], t):
                 valid = True
                 break
         if not valid:
@@ -47,8 +53,7 @@ def which_field(rule, valid_tickets):
     which = [1]*len(valid_tickets[0])
     for t in valid_tickets:
         for i in range(len(valid_tickets[0])):
-            if ((t[i] < rule[0][0] or t[i] > rule[0][1]) and
-                    (t[i] < rule[1][0] or t[i] > rule[1][1])):
+            if not valid_item(rule[0], rule[1], t[i]):
                 which[i] = 0
     return which
 
@@ -59,14 +64,15 @@ if __name__ == "__main__":
     file_name = "input_16.txt"
 
     rules, my_ticket, tickets = read_file(file_name)
-    invalid = []
+
+    invalid_values = []
     valid_tickets = []
     for t in tickets:
         inv = invalid_numbers(rules, t)
         if len(inv) == 0:
             valid_tickets.append(t)
-        invalid.extend(invalid_numbers(rules, t))
-    print(sum(invalid))  # 20048
+        invalid_values.extend(invalid_numbers(rules, t))
+    print(sum(invalid_values))  # 20048
 
     whiches = []
     names = []
