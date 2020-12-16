@@ -20,10 +20,10 @@ def read_file(file_name):
             if line.strip() == "":
                 section = 2
                 continue
-            elif "your" not in line.strip():
+            elif "your" not in line:
                 my_ticket = [int(l) for l in line.strip().split(",")]
-        elif section == 2:
-            if "nearby" not in line.strip():
+        else:
+            if "nearby" not in line:
                 ticket = [int(l) for l in line.strip().split(",")]
                 tickets.append(ticket)
 
