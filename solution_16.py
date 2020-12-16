@@ -72,7 +72,7 @@ if __name__ == "__main__":
         inv = invalid_numbers(rules, t)
         if len(inv) == 0:
             valid_tickets.append(t)
-        invalid_values.extend(invalid_numbers(rules, t))
+        invalid_values.extend(inv)
     print(sum(invalid_values))  # 20048
 
     whiches = [which_field(rule, valid_tickets) for _, rule in rules.items()]
