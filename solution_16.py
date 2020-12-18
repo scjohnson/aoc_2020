@@ -86,4 +86,4 @@ if __name__ == "__main__":
             break
 
     muls = [my_ticket[which.index(1)] for name, which in zip(names, whiches) if "departure" in name]
-    print(np.prod(muls))
+    print(np.prod(muls)) # 4810284647569
