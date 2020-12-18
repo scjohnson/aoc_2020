@@ -22,10 +22,8 @@ class IntRev():
 
 
 def evaluate(line):
-    line = line.strip()
     line = line.replace("*", "-")
-    line = line.replace("(", " ( ")
-    line = line.replace(")", " ) ")
+    line = line.replace("(", " ( ").replace(")", " ) ")
 
     splits = line.split(" ")
     for i, split in enumerate(splits):
@@ -40,12 +38,8 @@ def evaluate(line):
 
 
 def evaluate_rev(line):
-    line = line.strip()
-    line = line.replace("*", "-")
-    line = line.replace("+", "*")
-    line = line.replace("-", "+")
-    line = line.replace("(", " ( ")
-    line = line.replace(")", " ) ")
+    line = line.replace("*", "-").replace("+", "*").replace("-", "+")
+    line = line.replace("(", " ( ").replace(")", " ) ")
 
     splits = line.split(" ")
     for i, split in enumerate(splits):
@@ -64,5 +58,5 @@ if __name__ == "__main__":
     file_name = "test_18a.txt"
     file_name = "input_18.txt"
 
-    print(sum(evaluate(line) for line in open(file_name)))  # 50956598240016
-    print(sum(evaluate_rev(line) for line in open(file_name)))
+    print(sum(evaluate(line.strip()) for line in open(file_name)))  # 50956598240016
+    print(sum(evaluate_rev(line.strip()) for line in open(file_name))) # 535809575344339
