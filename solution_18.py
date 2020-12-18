@@ -1,8 +1,4 @@
-from itertools import product
-import numpy as np
-import sympy
-
-
+import re
 class Int():
     def __init__(self, i):
         self.val = i
