@@ -1,6 +1,5 @@
 import numpy as np
 import itertools
-import scipy.signal
 
 
 def read_tiles(file_name, array_size):
@@ -26,39 +25,37 @@ def read_tiles(file_name, array_size):
     return tiles
 
 
+def tile_iters(tile):
+    yield tile
+    for i in range(3):
+        tile = np.rot90(tile)
+        yield tile
+    tile = np.fliplr(tile)
+    yield tile
+    for i in range(3):
+        tile = np.rot90(tile)
+        yield tile
+
+
 def try_fit(big_image, big_i, big_j, tile):
     if big_i != 0:
         y_start = big_j*9
         y_stop = y_start+10
         x_start = big_i*10-(big_i-1)-1
         to_match = big_image[y_start:y_stop, x_start]
-        for i in range(4):
-            if np.all(to_match == tile[:, 0]):
-                big_image[y_start:y_stop, x_start:x_start+10] = tile
+        for t in tile_iters(tile):
+            if np.all(to_match == t[:, 0]):
+                big_image[y_start:y_stop, x_start:x_start+10] = t
                 return True
-            tile = np.rot90(tile)
-        tile = np.fliplr(tile)
-        for i in range(4):
-            if np.all(to_match == tile[:, 0]):
-                big_image[y_start:y_stop, x_start:x_start+10] = tile
-                return True
-            tile = np.rot90(tile)
     else:
         y_start = big_j*9
         x_start = 0
         x_stop = 10
         to_match = big_image[y_start, x_start:x_stop]
-        for i in range(4):
-            if np.all(to_match == tile[0, :]):
-                big_image[y_start:y_start+10, x_start:x_stop] = tile
+        for t in tile_iters(tile):
+            if np.all(to_match == t[0, :]):
+                big_image[y_start:y_start+10, x_start:x_stop] = t
                 return True
-            tile = np.rot90(tile)
-        tile = np.fliplr(tile)
-        for i in range(4):
-            if np.all(to_match == tile[0, :]):
-                big_image[y_start:y_start+10, x_start:x_stop] = tile
-                return True
-            tile = np.rot90(tile)
     return False
 
 
@@ -126,8 +123,7 @@ if __name__ == "__main__":
                     big_j += 1
                     big_i = 0
 
-    # new_big_image = np.zeros(
-    #    [big_image.shape[0]-image_size-1, big_image.shape[1]-image_size-1], np.int)
+    # Now remove the strips in between tiles and at the end
     for big_i in range(big_image.shape[0]-1, -1, -9):
         big_image = np.delete(big_image, big_i, 0)
         big_image = np.delete(big_image, big_i, 1)
@@ -136,8 +132,6 @@ if __name__ == "__main__":
                         [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
                             1, 1, 0, 0, 0, 0, 1, 1, 1],
                         [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0]], np.int)
-    # for small one:
-    # big_image = np.fliplr(big_image)
 
     big_image = np.fliplr(big_image)
     big_image = np.rot90(big_image)
@@ -147,12 +141,9 @@ if __name__ == "__main__":
     num_monsters = 0
     for i in range(0, big_image.shape[0]-monster.shape[0]):
         for j in range(0, big_image.shape[1]-monster.shape[1]):
-            sub_image = big_image[i:i+monster.shape[0], j:j+monster.shape[1]] 
+            sub_image = big_image[i:i+monster.shape[0], j:j+monster.shape[1]]
             if np.all(sub_image[monster == 1] == 1):
                 num_monsters += 1
     if (num_monsters > 0):
         print("found monsters")
-    print(np.sum(big_image)-num_monsters*np.sum(monster))
-
-    # hits = scipy.signal.convolve2d(big_image, monster)
-    # print(sum(hits))
+    print("part 2: ", np.sum(big_image)-num_monsters*np.sum(monster))  # 1559
