@@ -133,17 +133,14 @@ if __name__ == "__main__":
                             1, 1, 0, 0, 0, 0, 1, 1, 1],
                         [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0]], np.int)
 
-    big_image = np.fliplr(big_image)
-    big_image = np.rot90(big_image)
-    big_image = np.rot90(big_image)
-    # big_image = np.rot90(big_image)
-    # print(big_image)
-    num_monsters = 0
-    for i in range(0, big_image.shape[0]-monster.shape[0]):
-        for j in range(0, big_image.shape[1]-monster.shape[1]):
-            sub_image = big_image[i:i+monster.shape[0], j:j+monster.shape[1]]
-            if np.all(sub_image[monster == 1] == 1):
-                num_monsters += 1
-    if (num_monsters > 0):
-        print("found monsters")
-    print("part 2: ", np.sum(big_image)-num_monsters*np.sum(monster))  # 1559
+    for t in tile_iters(big_image):
+        num_monsters = 0
+        for i in range(0, t.shape[0]-monster.shape[0]):
+            for j in range(0, t.shape[1]-monster.shape[1]):
+                sub_image = t[i:i+monster.shape[0], j:j+monster.shape[1]]
+                if np.all(sub_image[monster == 1] == 1):
+                    num_monsters += 1
+        if (num_monsters > 0):
+            print("found monsters")
+            print("part 2: ", np.sum(big_image)-num_monsters*np.sum(monster))  # 1559
+            exit
