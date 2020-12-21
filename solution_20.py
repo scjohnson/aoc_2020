@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+from operator import add
 
 
 def read_tiles(file_name, tile_size):
@@ -25,12 +26,12 @@ def read_tiles(file_name, tile_size):
 
 def tile_iters(tile):
     yield tile
-    for i in range(3):
+    for _ in range(3):
         tile = np.rot90(tile)
         yield tile
     tile = np.fliplr(tile)
     yield tile
-    for i in range(3):
+    for _ in range(3):
         tile = np.rot90(tile)
         yield tile
 
@@ -59,9 +60,15 @@ def try_fit(big_image, big_i, big_j, tile):
 
 def connect(edge, tile2):
     for t in tile_iters(tile2):
-        if np.all(edge == t[0, :]):
-            return True
-    return False
+        if np.all(tile1[0, :] == t[0, :]):
+            return[1, 0, 0, 0]
+        if np.all(tile1[-1, :] == t[0, :]):
+            return[0, 1, 0, 0]
+        if np.all(tile1[:, 0] == t[0, :]):
+            return[0, 0, 1, 0]
+        if np.all(tile1[:, -1] == t[0, :]):
+            return[0, 0, 0, 1]
+    return [0, 0, 0, 0]
 
 
 if __name__ == "__main__":
@@ -76,26 +83,20 @@ if __name__ == "__main__":
 
     mult = 1
 
+
     # Find the corners and the starting one
     starting_corner = 0
     for tile_id1, tile1 in tiles.items():
         matches = [0, 0, 0, 0]
         for tile_id2, tile2 in tiles.items():
             if tile_id1 != tile_id2:
-                if connect(tile1[0, :], tile2):
-                    matches[0] = 1
-                if connect(tile1[-1, :], tile2):
-                    matches[1] = 1
-                if connect(tile1[:, 0], tile2):
-                    matches[2] = 1
-                if connect(tile1[:, -1], tile2):
-                    matches[3] = 1
+                matches = list(map(add, matches, connect(tile1, tile2)))
         if sum(matches) == 2:
             mult *= tile_id1
-            if (matches[1] == 1 and matches[3] == 1):
+            if matches[1] == matches[3] == 1:
                 starting_corner = tile_id1
     print("part 1: ", mult)  # 18449208814679
-
+    exit
     # Fit the pieces together
     big_i, big_j = 1, 0
     big_image_size = image_size*tile_size-(image_size-1)
@@ -108,10 +109,9 @@ if __name__ == "__main__":
                 continue
             if try_fit(big_image, big_i, big_j, tile):
                 used_tiles.append(tile_id)
-                big_i += 1
-                if big_i == image_size:
+                big_i = (big_i+1) % image_size
+                if big_i == 0:
                     big_j += 1
-                    big_i = 0
 
     # Now remove the strips in between tiles and at the end
     for big_i in range(big_image.shape[0]-1, -1, -(tile_size-1)):
@@ -132,4 +132,4 @@ if __name__ == "__main__":
         if (num_monsters > 0):
             print("part 2: ", np.sum(big_image) -
                   num_monsters*np.sum(monster))  # 1559
-            exit
+            break
