@@ -43,8 +43,8 @@ def consolidate_rules(rs):
                         if k == sr:
                             consolidated[k] = '(?R)'
                             print("replacing: ", k)
-            print(unconsolidated)
             # return consolidated
+            # print(unconsolidated)
     return consolidated
 
 
@@ -52,11 +52,12 @@ if __name__ == "__main__":
 
     file_name = "test_19b.txt"
     file_name = "input_19.txt"
-    fixes = True
+    fixes = False
 
     rules = {}
     section = 1
-    matches = 0
+    matches1 = 0
+    matches2 = 0
     for line in open(file_name):
         if line.strip() == "":
             section = 2
@@ -64,15 +65,29 @@ if __name__ == "__main__":
                 rules[8] = [[42], [42, 8]]
                 rules[11] = [[42, 31], [42, 11, 31]]
             rules = consolidate_rules(rules)
-            rules[0] = str.replace(rules[0], '?R', '?1', 1)
-            rules[0] = str.replace(rules[0], '?R', '?2', 1)
             continue
         if section == 1:
             rules[int(line.split(":")[0])] = rule(line.split(":")[1].strip())
         else:
             if regex.search("^" + rules[8], line.strip()):
                 a = regex.search("^" + rules[8], line.strip())
-                if regex.search("^" + rules[11] + "$", line.strip()[len(a.group(0)):]):
-                    matches += 1
-    # problem 1: 107
-    print(matches) # x > 180
+                if regex.match("^" + rules[11] + "$", line.strip()[len(a.group(0)):]):
+                    matches1 += 1
+
+            loc = 0
+            num_42s = 0
+            num_31s = 0
+            line = line.strip()
+            while regex.search("^" + rules[42], line[loc:]):
+                loc += len(regex.search("^" + rules[42], line[loc:]).group(0))
+                num_42s += 1
+            if num_42s > 0:
+                while regex.search("^" + rules[31], line[loc:]):
+                    loc += len(regex.search("^" +
+                                            rules[31], line[loc:]).group(0))
+                    num_31s += 1
+                if num_42s > num_31s and num_31s > 0 and loc == len(line):
+                    matches2 += 1
+
+    print(matches1)  # 107
+    print(matches2)  # 321
