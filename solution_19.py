@@ -42,9 +42,6 @@ def consolidate_rules(rs):
                     for sr in sub_rule:
                         if k == sr:
                             consolidated[k] = '(?R)'
-                            print("replacing: ", k)
-            # return consolidated
-            # print(unconsolidated)
     return consolidated
 
 
@@ -52,7 +49,6 @@ if __name__ == "__main__":
 
     file_name = "test_19b.txt"
     file_name = "input_19.txt"
-    fixes = False
 
     rules = {}
     section = 1
@@ -61,19 +57,18 @@ if __name__ == "__main__":
     for line in open(file_name):
         if line.strip() == "":
             section = 2
-            if fixes:
-                rules[8] = [[42], [42, 8]]
-                rules[11] = [[42, 31], [42, 11, 31]]
             rules = consolidate_rules(rules)
             continue
         if section == 1:
             rules[int(line.split(":")[0])] = rule(line.split(":")[1].strip())
         else:
+            # step 1
             if regex.search("^" + rules[8], line.strip()):
                 a = regex.search("^" + rules[8], line.strip())
                 if regex.match("^" + rules[11] + "$", line.strip()[len(a.group(0)):]):
                     matches1 += 1
 
+            # step 2
             loc = 0
             num_42s = 0
             num_31s = 0
