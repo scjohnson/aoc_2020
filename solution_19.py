@@ -21,27 +21,18 @@ def consolidate_rules(rs):
         else:
             unconsolidated[k] = v
     while len(unconsolidated) != 0:
-        changed = False
         delete_items = []
         for k, v in unconsolidated.items():
             for i, sub_rule in enumerate(v):
                 if all([item in consolidated for item in sub_rule]):
                     unconsolidated[k][i] = "".join([consolidated[i]
                                                     for i in sub_rule])
-                    changed = True
 
             if all([type(sub_rule) == str for sub_rule in v]):
                 consolidated[k] = "(" + "|".join(v) + ")"
                 delete_items.append(k)
-                changed = True
         for k in delete_items:
             del unconsolidated[k]
-        if not changed:
-            for k, v in unconsolidated.items():
-                for _, sub_rule in enumerate(v):
-                    for sr in sub_rule:
-                        if k == sr:
-                            consolidated[k] = '(?R)'
     return consolidated
 
 
