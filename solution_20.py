@@ -58,7 +58,7 @@ def try_fit(big_image, big_i, big_j, tile):
     return False
 
 
-def connect(edge, tile2):
+def connect(tile1, tile2):
     for t in tile_iters(tile2):
         if np.all(tile1[0, :] == t[0, :]):
             return[1, 0, 0, 0]
@@ -83,20 +83,26 @@ if __name__ == "__main__":
 
     mult = 1
 
-
     # Find the corners and the starting one
     starting_corner = 0
-    for tile_id1, tile1 in tiles.items():
-        matches = [0, 0, 0, 0]
-        for tile_id2, tile2 in tiles.items():
-            if tile_id1 != tile_id2:
-                matches = list(map(add, matches, connect(tile1, tile2)))
-        if sum(matches) == 2:
-            mult *= tile_id1
-            if matches[1] == matches[3] == 1:
-                starting_corner = tile_id1
+    matches = {}
+    for tid in tiles:
+        matches[tid] = [0, 0, 0, 0]
+    for tid1, tid2 in itertools.combinations(tiles, 2):
+        if tid1 != tid2:
+            # double work here, but meh...
+            matches[tid1] = list(
+                map(add, matches[tid1], connect(tiles[tid1], tiles[tid2])))
+            matches[tid2] = list(
+                map(add, matches[tid2], connect(tiles[tid2], tiles[tid1])))
+    for tid, match in matches.items():
+        if sum(match) == 2:
+            mult *= tid
+            if match[1] == match[3] == 1:
+                starting_corner = tid
+
     print("part 1: ", mult)  # 18449208814679
-    exit
+
     # Fit the pieces together
     big_i, big_j = 1, 0
     big_image_size = image_size*tile_size-(image_size-1)
