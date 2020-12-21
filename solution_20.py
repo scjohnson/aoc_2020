@@ -61,14 +61,14 @@ def try_fit(big_image, big_i, big_j, tile):
 def connect(tile1, tile2):
     for t in tile_iters(tile2):
         if np.all(tile1[0, :] == t[0, :]):
-            return[1, 0, 0, 0]
+            return True
         if np.all(tile1[-1, :] == t[0, :]):
-            return[0, 1, 0, 0]
+            return True
         if np.all(tile1[:, 0] == t[0, :]):
-            return[0, 0, 1, 0]
+            return True
         if np.all(tile1[:, -1] == t[0, :]):
-            return[0, 0, 0, 1]
-    return [0, 0, 0, 0]
+            return True
+    return False
 
 
 if __name__ == "__main__":
@@ -78,28 +78,23 @@ if __name__ == "__main__":
     tile_size = 10
     file_name = "input_20.txt"
     image_size = 12
+    starting_corner = 2207
 
     tiles = read_tiles(file_name, tile_size)
 
     mult = 1
 
     # Find the corners and the starting one
-    starting_corner = 0
     matches = {}
     for tid in tiles:
-        matches[tid] = [0, 0, 0, 0]
+        matches[tid] = 0
     for tid1, tid2 in itertools.combinations(tiles, 2):
-        if tid1 != tid2:
-            # double work here, but meh...
-            matches[tid1] = list(
-                map(add, matches[tid1], connect(tiles[tid1], tiles[tid2])))
-            matches[tid2] = list(
-                map(add, matches[tid2], connect(tiles[tid2], tiles[tid1])))
+        if connect(tiles[tid1], tiles[tid2]):
+            matches[tid1] += 1
+            matches[tid2] += 1
     for tid, match in matches.items():
-        if sum(match) == 2:
+        if match == 2:
             mult *= tid
-            if match[1] == match[3] == 1:
-                starting_corner = tid
 
     print("part 1: ", mult)  # 18449208814679
 
