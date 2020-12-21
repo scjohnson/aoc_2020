@@ -4,8 +4,6 @@ import itertools
 
 class Recipe:
     def __init__(self, line):
-        if "contains" not in line:
-            print("assumption wrong")
         ing, aler = line.split(" (")
         self.ingredients = ing.split(" ")
         self.alergens = aler[9:-1].split(", ")
@@ -25,11 +23,8 @@ if __name__ == "__main__":
     file_name = "input_21.txt"
     recipes = [Recipe(line.strip()) for line in open(file_name)]
 
-    alergens = []
-    ingredients = []
-    for recipe in recipes:
-        alergens.extend(recipe.alergens)
-        ingredients.extend(recipe.ingredients)
+    alergens = [alergen for recipe in recipes for alergen in recipe.alergens]
+    ingredients = [ingredient for recipe in recipes for ingredient in recipe.ingredients]
     alergens = list(set(alergens))
     orig_alergens = alergens.copy()
     ingredients = list(set(ingredients))
@@ -61,14 +56,10 @@ if __name__ == "__main__":
             else:
                 leftovers[ing] = 1
 
-    m = 0
-    for _, n in leftovers.items():
-        m += n
-    print("part 1: ", m)  # 2436
+    print("part 1: ", sum([n for _,n in leftovers.items()]))
 
-    s = ""
+    s = []
     for alergen in sorted(orig_alergens):
-        print(alergen)
         if alergen in alergic_ingredients:
-            s = s+alergic_ingredients[alergen]+","
-    print(s[:-1]) #dhfng,pgblcd,xhkdc,ghlzj,dstct,nqbnmzx,ntggc,znrzgs
+            s.append(alergic_ingredients[alergen])
+    print("part 2: ", ",".join(s)) #dhfng,pgblcd,xhkdc,ghlzj,dstct,nqbnmzx,ntggc,znrzgs
