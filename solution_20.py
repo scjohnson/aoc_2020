@@ -5,15 +5,13 @@ import itertools
 def read_tiles(file_name, tile_size):
     tiles = {}
     tile_id = 0
-    y = 0
 
-    tile = None
+    y = 0
     for line in open(file_name):
         if "Tile" in line:
             tile_id = int(line.strip().split(" ")[1][:-1])
             y = 0
             tiles[tile_id] = np.zeros([tile_size, tile_size], np.int)
-            # print(tiles[tile_id])
         elif line.strip == "":
             continue
         else:
@@ -60,22 +58,10 @@ def try_fit(big_image, big_i, big_j, tile):
 
 
 def connect(edge, tile2):
-    if np.all(edge == tile2[0, :]):
-        return True
-    if np.all(edge == tile2[-1, :]):
-        return True
-    if np.all(edge == tile2[:, 0]):
-        return True
-    if np.all(edge == tile2[:, -1]):
-        return True
-    if np.all(edge == np.flip(tile2[0, :])):
-        return True
-    if np.all(edge == np.flip(tile2[-1, :])):
-        return True
-    if np.all(edge == np.flip(tile2[:, 0])):
-        return True
-    if np.all(edge == np.flip(tile2[:, -1])):
-        return True
+    for t in tile_iters(tile2):
+        if np.all(edge == t[0, :]):
+            return True
+    return False
 
 
 if __name__ == "__main__":
@@ -139,11 +125,11 @@ if __name__ == "__main__":
 
     for t in tile_iters(big_image):
         num_monsters = 0
-        for i in range(0, t.shape[0]-monster.shape[0]):
-            for j in range(0, t.shape[1]-monster.shape[1]):
-                sub_image = t[i:i+monster.shape[0], j:j+monster.shape[1]]
-                if np.all(sub_image[monster == 1] == 1):
-                    num_monsters += 1
+        for i, j in itertools.product(range(t.shape[0]-monster.shape[0]), range(t.shape[1]-monster.shape[1])):
+            sub_image = t[i:i+monster.shape[0], j:j+monster.shape[1]]
+            if np.all(sub_image[monster == 1] == 1):
+                num_monsters += 1
         if (num_monsters > 0):
-            print("part 2: ", np.sum(big_image)-num_monsters*np.sum(monster))  # 1559
+            print("part 2: ", np.sum(big_image) -
+                  num_monsters*np.sum(monster))  # 1559
             exit
