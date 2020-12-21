@@ -2,7 +2,7 @@ import numpy as np
 import itertools
 
 
-def read_tiles(file_name, array_size):
+def read_tiles(file_name, tile_size):
     tiles = {}
     tile_id = 0
     y = 0
@@ -12,7 +12,7 @@ def read_tiles(file_name, array_size):
         if "Tile" in line:
             tile_id = int(line.strip().split(" ")[1][:-1])
             y = 0
-            tiles[tile_id] = np.zeros([array_size, array_size], np.int)
+            tiles[tile_id] = np.zeros([tile_size, tile_size], np.int)
             # print(tiles[tile_id])
         elif line.strip == "":
             continue
@@ -80,37 +80,41 @@ def connect(edge, tile2):
 
 if __name__ == "__main__":
 
-    file_name = "test_20.txt"
-    array_size = 10
-    image_size = 3
+    # file_name = "test_20.txt"
+    # image_size = 3
+    tile_size = 10
     file_name = "input_20.txt"
     image_size = 12
 
-    tiles = read_tiles(file_name, array_size)
+    tiles = read_tiles(file_name, tile_size)
+
     mult = 1
+
+    # Find the corners and the starting one
     starting_corner = 0
     for tile_id1, tile1 in tiles.items():
-        no_matches = [0, 0, 0, 0]
+        matches = [0, 0, 0, 0]
         for tile_id2, tile2 in tiles.items():
             if tile_id1 != tile_id2:
                 if connect(tile1[0, :], tile2):
-                    no_matches[0] = 1
+                    matches[0] = 1
                 if connect(tile1[-1, :], tile2):
-                    no_matches[1] = 1
+                    matches[1] = 1
                 if connect(tile1[:, 0], tile2):
-                    no_matches[2] = 1
+                    matches[2] = 1
                 if connect(tile1[:, -1], tile2):
-                    no_matches[3] = 1
-        if sum(no_matches) == 2:
+                    matches[3] = 1
+        if sum(matches) == 2:
             mult *= tile_id1
-            if (no_matches[1] == 1 and no_matches[3] == 1):
+            if (matches[1] == 1 and matches[3] == 1):
                 starting_corner = tile_id1
     print("part 1: ", mult)  # 18449208814679
 
+    # Fit the pieces together
     big_i, big_j = 1, 0
-    big_image_size = image_size*array_size-(image_size-1)
+    big_image_size = image_size*tile_size-(image_size-1)
     big_image = np.zeros([big_image_size, big_image_size], np.int)
-    big_image[:array_size, :array_size] = tiles[starting_corner]
+    big_image[:tile_size, :tile_size] = tiles[starting_corner]
     used_tiles = [starting_corner]
     while len(used_tiles) != len(tiles):
         for tile_id, tile in tiles.items():
@@ -124,7 +128,7 @@ if __name__ == "__main__":
                     big_i = 0
 
     # Now remove the strips in between tiles and at the end
-    for big_i in range(big_image.shape[0]-1, -1, -9):
+    for big_i in range(big_image.shape[0]-1, -1, -(tile_size-1)):
         big_image = np.delete(big_image, big_i, 0)
         big_image = np.delete(big_image, big_i, 1)
 
@@ -141,6 +145,5 @@ if __name__ == "__main__":
                 if np.all(sub_image[monster == 1] == 1):
                     num_monsters += 1
         if (num_monsters > 0):
-            print("found monsters")
             print("part 2: ", np.sum(big_image)-num_monsters*np.sum(monster))  # 1559
             exit
