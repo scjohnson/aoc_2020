@@ -1,6 +1,3 @@
-import numpy as np
-import itertools
-
 
 class Recipe:
     def __init__(self, line):
@@ -24,7 +21,8 @@ if __name__ == "__main__":
     recipes = [Recipe(line.strip()) for line in open(file_name)]
 
     alergens = [alergen for recipe in recipes for alergen in recipe.alergens]
-    ingredients = [ingredient for recipe in recipes for ingredient in recipe.ingredients]
+    ingredients = [
+        ingredient for recipe in recipes for ingredient in recipe.ingredients]
     alergens = list(set(alergens))
     orig_alergens = alergens.copy()
     ingredients = list(set(ingredients))
@@ -56,10 +54,11 @@ if __name__ == "__main__":
             else:
                 leftovers[ing] = 1
 
-    print("part 1: ", sum([n for _,n in leftovers.items()]))
+    print("part 1: ", sum([n for _, n in leftovers.items()]))
 
     s = []
     for alergen in sorted(orig_alergens):
         if alergen in alergic_ingredients:
             s.append(alergic_ingredients[alergen])
-    print("part 2: ", ",".join(s)) #dhfng,pgblcd,xhkdc,ghlzj,dstct,nqbnmzx,ntggc,znrzgs
+    # dhfng,pgblcd,xhkdc,ghlzj,dstct,nqbnmzx,ntggc,znrzgs
+    print("part 2: ", ",".join(s))
