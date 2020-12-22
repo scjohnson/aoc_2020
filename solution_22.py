@@ -25,13 +25,13 @@ def play(deck1, deck2):
 
 
 def play_recursive(deck1, deck2):
-    priors = []
+    priors = set()
     while deck1 and deck2:
 
         orientation = hash(tuple(deck1[:] + [-1] + deck2[:]))
         if orientation in priors:
             return deck1, 1
-        priors.append(orientation)
+        priors.add(orientation)
 
         c1 = deck1.pop(0)
         c2 = deck2.pop(0)
