@@ -27,28 +27,34 @@ def play(deck1, deck2):
 def play_recursive(deck1, deck2):
     priors = []
     while deck1 and deck2:
+
         orientation = hash(tuple(deck1[:] + [-1] + deck2[:]))
         if orientation in priors:
             return deck1, 1
         priors.append(orientation)
 
-        winner = 1
+        c1 = deck1.pop(0)
+        c2 = deck2.pop(0)
 
-        if deck1[0] >= len(deck1) or deck2[0] >= len(deck2):
-            winner = 1 if deck1[0] > deck2[0] else 2
+        winner = 1
+        if c1 > len(deck1) or c2 > len(deck2):
+            winner = 1 if c1 > c2 else 2
         else:
-            _, winner = play_recursive(
-                deck1[1:deck1[0]+1], deck2[1:deck2[0]+1])
+            _, winner = play_recursive(deck1[0:c1], deck2[0:c2])
+
         if winner == 1:
-            deck1.append(deck1.pop(0))
-            deck1.append(deck2.pop(0))
+            deck1.append(c1)
+            deck1.append(c2)
         else:
-            deck2.append(deck2.pop(0))
-            deck2.append(deck1.pop(0))
+            deck2.append(c2)
+            deck2.append(c1)
+
     return (deck2, 2) if deck2 else (deck1, 1)
 
+
 def score(deck):
-    return sum([x*y for x, y in zip(winning_deck, range(len(winning_deck),0, -1))])
+    return sum([x*y for x, y in zip(winning_deck, range(len(winning_deck), 0, -1))])
+
 
 if __name__ == "__main__":
 
@@ -61,6 +67,6 @@ if __name__ == "__main__":
     print(score(winning_deck))
 
     deck1, deck2 = read_decks(file_name)
-    winning_deck, winner = play_recursive(deck1, deck2)
+    winning_deck, _ = play_recursive(deck1, deck2)
     # 34901
     print(score(winning_deck))
