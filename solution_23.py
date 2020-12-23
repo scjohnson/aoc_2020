@@ -37,13 +37,17 @@ def dplay(cups, dest):
 
 if __name__ == "__main__":
 
-    cups = [3, 8, 9, 1, 2, 5, 4, 6, 7]
+    # cups = [3, 8, 9, 1, 2, 5, 4, 6, 7]
     cups = [8, 5, 3, 1, 9, 2, 6, 4, 7]
 
     cupsd = deque([i-1 for i in cups])
-    for _ in range(10):
+    for _ in range(100):
         cupsd = play(cupsd)
-    print([cupsd.popleft()+1 for i in range(len(cups))])  # 97624853
+    results = [cupsd.popleft()+1 for i in range(len(cups))]  # 97624853
+    results = results[results.index(1) + 1:] + results[:results.index(1)]
+    print("".join([str(s) for s in results]))
+
+    cups = cups + list(range(10, 1000001))
 
     dcups = {}
     for i in range(len(cups)-1):
@@ -51,17 +55,6 @@ if __name__ == "__main__":
     dcups[cups[-1]-1] = cups[0]-1
 
     dest = cups[0]-1
-    for _ in range(10):
-        dcups, dest = dplay(dcups, dest)
-    print(dcups)
-
-    cups = cups + list(range(10, 1000001))
-    for i in range(len(cups)-1):
-        dcups[cups[i]-1] = cups[i+1]-1
-    dcups[cups[-1]-1] = cups[0]-1
-
-    dest = cups[0]-1
-    print(len(dcups))
     for _ in tqdm(range(10000000)):
         dcups, dest = dplay(dcups, dest)
-    print((dcups[0]+1)*(dcups[dcups[0]]+1))
+    print((dcups[0]+1)*(dcups[dcups[0]]+1))  # 664642452305
