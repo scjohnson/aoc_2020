@@ -23,7 +23,7 @@ def list_to_dict(l):
     for i in range(len(cups)-1):
         dcups[cups[i]-1] = cups[i+1]-1
     dcups[cups[-1]-1] = cups[0]-1
-    return dcups
+    return dcups, cups[0]-1
 
 
 if __name__ == "__main__":
@@ -31,8 +31,7 @@ if __name__ == "__main__":
     # cups = [3, 8, 9, 1, 2, 5, 4, 6, 7]
     cups = [8, 5, 3, 1, 9, 2, 6, 4, 7]
 
-    dcups = list_to_dict(cups)
-    dest = cups[0]-1
+    dcups, dest = list_to_dict(cups)
     for _ in tqdm(range(100)):
         dcups, dest = dplay(dcups, dest)
 
@@ -41,10 +40,9 @@ if __name__ == "__main__":
         res.append(dcups[res[-1]])
     print("".join([str(s+1) for s in res[1:]]))  # 97624853
 
-    cups=cups + list(range(10, 1000001))
+    cups = cups + list(range(10, 1000001))
 
-    dcups=list_to_dict(cups)
-    dest=cups[0]-1
+    dcups, dest = list_to_dict(cups)
     for _ in tqdm(range(10000000)):
-        dcups, dest=dplay(dcups, dest)
+        dcups, dest = dplay(dcups, dest)
     print((dcups[0]+1)*(dcups[dcups[0]]+1))  # 664642452305
